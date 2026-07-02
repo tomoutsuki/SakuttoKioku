@@ -1,0 +1,48 @@
+{
+  "id": "physics-optics-basics",
+  "version": 1,
+  "title": "Physics: Optics Basics",
+  "description": "Light, refraction, and optical behavior.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "question": "What happens when white light passes through a prism as shown?",
+      "image": "assets/prism.svg",
+      "choices": [
+        "It slows down and disappears.",
+        "It splits into different colors.",
+        "It turns into sound waves.",
+        "It becomes a magnetic field."
+      ],
+      "answer": 1,
+      "explanation": "A prism disperses white light into its component wavelengths."
+    },
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "question": "The bending of light when it moves from air into water is called:",
+      "choices": [
+        "Reflection",
+        "Diffraction",
+        "Refraction",
+        "Polarization"
+      ],
+      "answer": 2,
+      "explanation": "Refraction is the change in direction caused by light entering a medium with a different refractive index."
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "question": "Which color of visible light has the longest wavelength?",
+      "choices": [
+        "Violet",
+        "Blue",
+        "Green",
+        "Red"
+      ],
+      "answer": 3,
+      "explanation": "Red light has the longest wavelength in the visible spectrum."
+    }
+  ]
+}

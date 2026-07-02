@@ -1,0 +1,21 @@
+{
+  "id": "physics-basics-v1",
+  "version": 1,
+  "title": "Physics Basics",
+  "description": "Basic mechanics",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "question": "What is Newton's Second Law?",
+      "choices": [
+        "F = ma",
+        "E = mc²",
+        "PV = nRT",
+        "a²+b²=c²"
+      ],
+      "answer": 0,
+      "explanation": "Force equals mass times acceleration."
+    }
+  ]
+}

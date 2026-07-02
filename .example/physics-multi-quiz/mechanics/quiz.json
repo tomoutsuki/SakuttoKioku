@@ -1,0 +1,48 @@
+{
+  "id": "physics-mechanics-basics",
+  "version": 1,
+  "title": "Physics: Mechanics Basics",
+  "description": "Core ideas about motion, forces, and energy.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "question": "What is Newton's Second Law of Motion?",
+      "choices": [
+        "Force equals mass times acceleration.",
+        "Every action has an equal and opposite reaction.",
+        "Energy cannot be created or destroyed.",
+        "Momentum equals force divided by time."
+      ],
+      "answer": 0,
+      "explanation": "Newton's Second Law states that F = ma."
+    },
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "question": "A pendulum is shown in the image. At the lowest point of its swing, which energy is greatest?",
+      "image": "assets/pendulum.svg",
+      "choices": [
+        "Thermal energy",
+        "Potential energy",
+        "Kinetic energy",
+        "Electrical energy"
+      ],
+      "answer": 2,
+      "explanation": "At the lowest point, gravitational potential energy is minimal and kinetic energy is maximal."
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "question": "Which quantity is a vector?",
+      "choices": [
+        "Speed",
+        "Distance",
+        "Mass",
+        "Velocity"
+      ],
+      "answer": 3,
+      "explanation": "Velocity has both magnitude and direction, so it is a vector."
+    }
+  ]
+}

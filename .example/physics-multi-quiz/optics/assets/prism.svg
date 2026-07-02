@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
+  <title id="title">Prism illustration</title>
+  <desc id="desc">White light entering a prism and splitting into colors.</desc>
+  <rect width="320" height="220" fill="#f7f4ec" />
+  <polygon points="140,40 220,110 140,180" fill="#d8f0eb" stroke="#132238" stroke-width="4" />
+  <line x1="30" y1="110" x2="140" y2="110" stroke="#132238" stroke-width="6" stroke-linecap="round" />
+  <line x1="220" y1="110" x2="300" y2="80" stroke="#ef7d45" stroke-width="5" stroke-linecap="round" />
+  <line x1="220" y1="110" x2="302" y2="98" stroke="#e7b416" stroke-width="5" stroke-linecap="round" />
+  <line x1="220" y1="110" x2="304" y2="116" stroke="#157a6e" stroke-width="5" stroke-linecap="round" />
+  <line x1="220" y1="110" x2="306" y2="134" stroke="#2b59c3" stroke-width="5" stroke-linecap="round" />
+  <line x1="220" y1="110" x2="308" y2="152" stroke="#7d3cff" stroke-width="5" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,47 @@
+{
+  "id": "physics-electromagnetism-basics",
+  "version": 1,
+  "title": "Physics: Electromagnetism Basics",
+  "description": "Electric charge, current, and magnetic effects.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "question": "What is the SI unit of electric current?",
+      "choices": [
+        "Volt",
+        "Ohm",
+        "Ampere",
+        "Coulomb"
+      ],
+      "answer": 2,
+      "explanation": "Electric current is measured in amperes."
+    },
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "question": "Which particle carries a negative electric charge?",
+      "choices": [
+        "Proton",
+        "Neutron",
+        "Photon",
+        "Electron"
+      ],
+      "answer": 3,
+      "explanation": "Electrons have negative charge."
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "question": "A changing electric field can generate:",
+      "choices": [
+        "Only gravity",
+        "A magnetic field",
+        "Only temperature",
+        "Only mass"
+      ],
+      "answer": 1,
+      "explanation": "Electric and magnetic fields are linked; changing electric fields can induce magnetic fields."
+    }
+  ]
+}

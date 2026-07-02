@@ -1,0 +1,47 @@
+{
+  "id": "physics-thermodynamics-basics",
+  "version": 1,
+  "title": "Physics: Thermodynamics Basics",
+  "description": "Temperature, heat transfer, and the laws of thermodynamics.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple_choice",
+      "question": "Heat naturally flows from:",
+      "choices": [
+        "A colder object to a hotter object.",
+        "A hotter object to a colder object.",
+        "An object with less mass to one with more mass.",
+        "A vacuum to a solid."
+      ],
+      "answer": 1,
+      "explanation": "Thermal energy naturally transfers from higher temperature to lower temperature."
+    },
+    {
+      "id": "q2",
+      "type": "multiple_choice",
+      "question": "Which law states that energy cannot be created or destroyed?",
+      "choices": [
+        "Zeroth Law of Thermodynamics",
+        "First Law of Thermodynamics",
+        "Second Law of Thermodynamics",
+        "Third Law of Thermodynamics"
+      ],
+      "answer": 1,
+      "explanation": "The First Law expresses conservation of energy."
+    },
+    {
+      "id": "q3",
+      "type": "multiple_choice",
+      "question": "Which mode of heat transfer does not require a material medium?",
+      "choices": [
+        "Conduction",
+        "Convection",
+        "Radiation",
+        "Diffusion"
+      ],
+      "answer": 2,
+      "explanation": "Radiation can travel through a vacuum."
+    }
+  ]
+}

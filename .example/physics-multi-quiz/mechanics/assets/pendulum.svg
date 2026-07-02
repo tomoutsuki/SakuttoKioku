@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
+  <title id="title">Pendulum illustration</title>
+  <desc id="desc">A simple pendulum suspended from a support.</desc>
+  <rect width="320" height="220" fill="#f7f4ec" />
+  <rect x="60" y="28" width="200" height="12" rx="6" fill="#132238" />
+  <line x1="160" y1="40" x2="112" y2="146" stroke="#157a6e" stroke-width="6" />
+  <circle cx="112" cy="146" r="28" fill="#ef7d45" />
+  <circle cx="160" cy="40" r="7" fill="#132238" />
+  <path d="M170 56c34 14 48 58 34 92" fill="none" stroke="#b24a1f" stroke-width="4" stroke-linecap="round" />
+</svg>
