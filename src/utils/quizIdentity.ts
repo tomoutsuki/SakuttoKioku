@@ -1,4 +1,4 @@
-import type { QuizDocumentInput } from "../types/quiz";
+﻿import type { QuizDocumentInput } from "../types/quiz";
 
 function slugify(value: string) {
   return value
@@ -26,12 +26,24 @@ export function createDerivedQuizId(quiz: QuizDocumentInput) {
 
   const fingerprint = JSON.stringify({
     title: quiz.title,
-    questions: quiz.questions.map((question) => ({
-      id: question.id,
-      question: question.question,
-      choices: question.choices,
-      answer: question.answer,
-    })),
+    questions: quiz.questions.map((question) => {
+      if (question.type === "multiple_choice") {
+        return {
+          id: question.id,
+          type: question.type,
+          question: question.question,
+          choices: question.choices,
+          answer: question.answer,
+        };
+      }
+
+      return {
+        id: question.id,
+        type: question.type,
+        question: question.question,
+        pairs: question.pairs,
+      };
+    }),
   });
 
   return `${base}-${hashValue(fingerprint)}`;

@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "physics-basics-v1",
   "version": 1,
   "title": "Physics Basics",
@@ -15,7 +15,8 @@
         "a²+b²=c²"
       ],
       "answer": 0,
-      "explanation": "Force equals mass times acceleration."
+      "explanation": "Force equals mass times acceleration.",
+      "hint": "Think about the equation that links force, mass, and acceleration."
     }
   ]
 }

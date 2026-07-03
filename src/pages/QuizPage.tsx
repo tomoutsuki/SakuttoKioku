@@ -1,24 +1,44 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { QuestionCard } from "../components/QuestionCard";
 import { QuestionProgress } from "../components/QuestionProgress";
 import { useAppContext } from "../context/AppContext";
 import { useQuizRecord } from "../hooks/useQuizRecord";
-import { formatDateTime, formatPercentage } from "../utils/format";
+import { createIncorrectQuestionRecord, isQuestionCorrect } from "../quiz/questionRuntime";
+import type { QuizQuestionResponse } from "../types/quiz";
+import { formatDuration, formatPercentage } from "../utils/format";
 
 export function QuizPage() {
   const { quizId } = useParams();
   const { recordAttempt } = useAppContext();
-  const { quiz, stats } = useQuizRecord(quizId);
+  const { quiz } = useQuizRecord(quizId);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, QuizQuestionResponse>>({});
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [completedDurationMs, setCompletedDurationMs] = useState<number | null>(null);
   const completionRecorded = useRef(false);
+  const startedAtRef = useRef(Date.now());
 
   useEffect(() => {
     setCurrentIndex(0);
     setAnswers({});
+    setElapsedMs(0);
+    setCompletedDurationMs(null);
     completionRecorded.current = false;
+    startedAtRef.current = Date.now();
   }, [quizId]);
+
+  useEffect(() => {
+    if (completedDurationMs !== null) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setElapsedMs(Date.now() - startedAtRef.current);
+    }, 1000);
+
+    return () => window.clearInterval(interval);
+  }, [completedDurationMs]);
 
   const summary = useMemo(() => {
     if (!quiz) {
@@ -27,14 +47,27 @@ export function QuizPage() {
         correctAnswers: 0,
         wrongAnswers: 0,
         percentage: 0,
+        incorrectQuestions: [],
         isComplete: false,
       };
     }
 
     const answeredCount = Object.keys(answers).length;
     const correctAnswers = quiz.questions.reduce((count, question) => {
-      return count + (answers[question.id] === question.correctAnswerIndex ? 1 : 0);
+      const answer = answers[question.id];
+      return count + (answer && isQuestionCorrect(question, answer) ? 1 : 0);
     }, 0);
+
+    const incorrectQuestions = quiz.questions.flatMap((question) => {
+      const answer = answers[question.id];
+      if (!answer) {
+        return [];
+      }
+
+      const incorrectRecord = createIncorrectQuestionRecord(question, answer);
+      return incorrectRecord ? [incorrectRecord] : [];
+    });
+
     const wrongAnswers = answeredCount - correctAnswers;
     const percentage = quiz.questions.length === 0 ? 0 : (correctAnswers / quiz.questions.length) * 100;
 
@@ -43,6 +76,7 @@ export function QuizPage() {
       correctAnswers,
       wrongAnswers,
       percentage,
+      incorrectQuestions,
       isComplete: answeredCount === quiz.questions.length && quiz.questions.length > 0,
     };
   }, [answers, quiz]);
@@ -53,13 +87,17 @@ export function QuizPage() {
     }
 
     completionRecorded.current = true;
+    const durationMs = Date.now() - startedAtRef.current;
+    setCompletedDurationMs(durationMs);
     void recordAttempt(quiz.id, {
       totalQuestions: quiz.questions.length,
       correctAnswers: summary.correctAnswers,
       wrongAnswers: summary.wrongAnswers,
       percentage: summary.percentage,
+      durationMs,
+      incorrectQuestions: summary.incorrectQuestions,
     });
-  }, [quiz, recordAttempt, summary.correctAnswers, summary.isComplete, summary.percentage, summary.wrongAnswers]);
+  }, [quiz, recordAttempt, summary.correctAnswers, summary.incorrectQuestions, summary.isComplete, summary.percentage, summary.wrongAnswers]);
 
   if (!quiz) {
     return (
@@ -76,72 +114,58 @@ export function QuizPage() {
   }
 
   const currentQuestion = quiz.questions[currentIndex];
-  const selectedAnswer = answers[currentQuestion.id];
+  const currentResponse = answers[currentQuestion.id];
   const currentAsset = currentQuestion.image ? quiz.assets[currentQuestion.image] : undefined;
-  const attempts = stats?.attempts ?? [];
-  const latestAttempt = attempts[attempts.length - 1];
+  const displayDuration = completedDurationMs ?? elapsedMs;
 
   return (
-    <div className="space-y-5">
-      <QuestionProgress
-        currentIndex={currentIndex}
-        total={quiz.questions.length}
-        answeredCount={summary.answeredCount}
-      />
+    <div className="flex h-full min-h-0 flex-col gap-3 overflow-hidden">
+      <QuestionProgress currentIndex={currentIndex} total={quiz.questions.length} />
 
-      <section className="surface-card animate-rise p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-black">{quiz.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-ink/70">{quiz.description || "No description provided."}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 text-sm sm:min-w-[14rem]">
-            <div className="rounded-2xl bg-ink/5 px-3 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/55">Attempts</p>
-              <p className="mt-1 text-lg font-black">{attempts.length}</p>
-            </div>
-            <div className="rounded-2xl bg-brand-soft/70 px-3 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-deep">Last score</p>
-              <p className="mt-1 text-lg font-black">{formatPercentage(latestAttempt?.percentage ?? 0)}</p>
-            </div>
+      <section className="surface-card animate-rise p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="truncate text-base font-black text-ink">{quiz.title}</h2>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-semibold text-ink/70">
+              {formatDuration(displayDuration)}
+            </span>
+            {summary.isComplete ? (
+              <span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand-deep">
+                {formatPercentage(summary.percentage)}
+              </span>
+            ) : null}
           </div>
         </div>
-
-        <div className="mt-4 rounded-3xl bg-ink/5 px-4 py-3 text-sm text-ink/70">
-          Last played: <strong className="text-ink">{formatDateTime(latestAttempt?.playedAt)}</strong>
-        </div>
-
         {summary.isComplete ? (
-          <div className="mt-5 rounded-[28px] bg-brand-soft/80 p-4 text-sm leading-6 text-ink">
-            <p className="font-black">Quiz complete.</p>
-            <p className="mt-2">
-              Final score: {summary.correctAnswers} / {quiz.questions.length} ({formatPercentage(summary.percentage)})
-            </p>
-          </div>
+          <p className="mt-2 text-xs leading-5 text-ink/70">
+            Final score: {summary.correctAnswers} / {quiz.questions.length}
+          </p>
         ) : null}
       </section>
 
-      <QuestionCard
-        question={currentQuestion}
-        assetSource={currentAsset}
-        selectedAnswer={selectedAnswer}
-        onSelectAnswer={(answerIndex) =>
-          setAnswers((current) =>
-            current[currentQuestion.id] !== undefined
-              ? current
-              : {
-                  ...current,
-                  [currentQuestion.id]: answerIndex,
-                },
-          )
-        }
-      />
+      <div className="min-h-0 flex-1">
+        <QuestionCard
+          question={currentQuestion}
+          assetSource={currentAsset}
+          response={currentResponse}
+          onSubmitAnswer={(answer) =>
+            setAnswers((current) =>
+              current[currentQuestion.id] !== undefined
+                ? current
+                : {
+                    ...current,
+                    [currentQuestion.id]: answer,
+                  },
+            )
+          }
+        />
+      </div>
 
-      <section className="surface-card animate-rise p-5">
-        <div className="flex gap-3">
+      <section className="surface-card animate-rise p-3">
+        <div className="flex gap-2">
           <button
             type="button"
-            className="action-button flex-1 bg-ink/5 text-ink hover:bg-ink/10"
+            className="action-button flex-1 bg-ink/5 py-2.5 text-ink hover:bg-ink/10"
             onClick={() => setCurrentIndex((value) => Math.max(0, value - 1))}
             disabled={currentIndex === 0}
           >
@@ -149,7 +173,7 @@ export function QuizPage() {
           </button>
           <button
             type="button"
-            className="action-button flex-1 bg-brand text-white hover:bg-brand-deep"
+            className="action-button flex-1 bg-brand py-2.5 text-white hover:bg-brand-deep"
             onClick={() => setCurrentIndex((value) => Math.min(quiz.questions.length - 1, value + 1))}
             disabled={currentIndex === quiz.questions.length - 1}
           >

@@ -1,4 +1,4 @@
-import {
+﻿import {
   createContext,
   useCallback,
   useContext,
@@ -18,6 +18,10 @@ interface AppContextValue {
   importJson(file: File): Promise<ImportOutcome>;
   importZip(file: File): Promise<ImportOutcome>;
   recordAttempt(quizId: string, attempt: Omit<QuizAttempt, "id" | "playedAt">): Promise<void>;
+  renameQuiz(quizId: string, title: string): Promise<void>;
+  deleteQuiz(quizId: string): Promise<void>;
+  renameCollection(collectionId: string, name: string): Promise<void>;
+  deleteCollection(collectionId: string): Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -28,6 +32,12 @@ function indexStatistics(entries: QuizStatistics[]) {
 
 function createAttemptId() {
   return `attempt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function sortQuizzes(quizzes: StoredQuiz[]) {
+  return [...quizzes].sort(
+    (left, right) => new Date(right.importedAt).getTime() - new Date(left.importedAt).getTime(),
+  );
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
@@ -48,11 +58,7 @@ export function AppProvider({ children }: PropsWithChildren) {
         return;
       }
 
-      setQuizzes(
-        storedQuizzes.sort(
-          (left, right) => new Date(right.importedAt).getTime() - new Date(left.importedAt).getTime(),
-        ),
-      );
+      setQuizzes(sortQuizzes(storedQuizzes));
       setStatistics(indexStatistics(storedStatistics));
       setIsReady(true);
     }
@@ -87,11 +93,7 @@ export function AppProvider({ children }: PropsWithChildren) {
     });
 
     await Promise.all(accepted.map((quiz) => browserStorage.saveQuiz(quiz)));
-    setQuizzes((current) =>
-      [...accepted, ...current].sort(
-        (left, right) => new Date(right.importedAt).getTime() - new Date(left.importedAt).getTime(),
-      ),
-    );
+    setQuizzes((current) => sortQuizzes([...accepted, ...current]));
 
     return {
       importedQuizzes: accepted,
@@ -135,6 +137,85 @@ export function AppProvider({ children }: PropsWithChildren) {
     [statistics],
   );
 
+  const renameQuiz = useCallback(async (quizId: string, title: string) => {
+    const nextTitle = title.trim();
+    if (!nextTitle) {
+      return;
+    }
+
+    const quiz = quizzes.find((entry) => entry.id === quizId);
+    if (!quiz || quiz.title === nextTitle) {
+      return;
+    }
+
+    const nextQuiz: StoredQuiz = {
+      ...quiz,
+      title: nextTitle,
+    };
+
+    await browserStorage.saveQuiz(nextQuiz);
+    setQuizzes((current) => sortQuizzes(current.map((entry) => (entry.id === quizId ? nextQuiz : entry))));
+  }, [quizzes]);
+
+  const deleteQuiz = useCallback(async (quizId: string) => {
+    await Promise.all([
+      browserStorage.deleteQuiz(quizId),
+      browserStorage.deleteStatistics(quizId),
+    ]);
+
+    setQuizzes((current) => current.filter((entry) => entry.id !== quizId));
+    setStatistics((current) => {
+      const next = { ...current };
+      delete next[quizId];
+      return next;
+    });
+  }, []);
+
+  const renameCollection = useCallback(async (collectionId: string, name: string) => {
+    const nextName = name.trim();
+    if (!nextName) {
+      return;
+    }
+
+    const collectionQuizzes = quizzes.filter((entry) => entry.collectionId === collectionId);
+    if (collectionQuizzes.length === 0) {
+      return;
+    }
+
+    const nextQuizzes = collectionQuizzes.map<StoredQuiz>((quiz) => ({
+      ...quiz,
+      collectionName: nextName,
+    }));
+
+    await Promise.all(nextQuizzes.map((quiz) => browserStorage.saveQuiz(quiz)));
+    setQuizzes((current) => sortQuizzes(current.map((entry) => {
+      const updated = nextQuizzes.find((quiz) => quiz.id === entry.id);
+      return updated ?? entry;
+    })));
+  }, [quizzes]);
+
+  const deleteCollection = useCallback(async (collectionId: string) => {
+    const collectionQuizzes = quizzes.filter((entry) => entry.collectionId === collectionId);
+    if (collectionQuizzes.length === 0) {
+      return;
+    }
+
+    await Promise.all(collectionQuizzes.flatMap((quiz) => [
+      browserStorage.deleteQuiz(quiz.id),
+      browserStorage.deleteStatistics(quiz.id),
+    ]));
+
+    const deletedIds = new Set(collectionQuizzes.map((quiz) => quiz.id));
+    setQuizzes((current) => current.filter((entry) => !deletedIds.has(entry.id)));
+    setStatistics((current) => {
+      const next = { ...current };
+      deletedIds.forEach((quizId) => {
+        delete next[quizId];
+      });
+      return next;
+    });
+  }, [quizzes]);
+
   const value = useMemo<AppContextValue>(
     () => ({
       quizzes,
@@ -143,8 +224,12 @@ export function AppProvider({ children }: PropsWithChildren) {
       importJson,
       importZip,
       recordAttempt,
+      renameQuiz,
+      deleteQuiz,
+      renameCollection,
+      deleteCollection,
     }),
-    [importJson, importZip, isReady, quizzes, recordAttempt, statistics],
+    [deleteCollection, deleteQuiz, importJson, importZip, isReady, quizzes, recordAttempt, renameCollection, renameQuiz, statistics],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

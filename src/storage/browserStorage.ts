@@ -56,6 +56,11 @@ class IndexedDbAdapter implements StorageAdapter {
     await requestToPromise(store.put(quiz));
   }
 
+  async deleteQuiz(quizId: string) {
+    const store = await this.transaction(QUIZZES_STORE, "readwrite");
+    await requestToPromise(store.delete(quizId));
+  }
+
   async getStatistics() {
     const store = await this.transaction(STATISTICS_STORE, "readonly");
     return requestToPromise(store.getAll()) as Promise<QuizStatistics[]>;
@@ -64,6 +69,11 @@ class IndexedDbAdapter implements StorageAdapter {
   async saveStatistics(stats: QuizStatistics) {
     const store = await this.transaction(STATISTICS_STORE, "readwrite");
     await requestToPromise(store.put(stats));
+  }
+
+  async deleteStatistics(quizId: string) {
+    const store = await this.transaction(STATISTICS_STORE, "readwrite");
+    await requestToPromise(store.delete(quizId));
   }
 }
 
@@ -92,6 +102,12 @@ class LocalStorageAdapter implements StorageAdapter {
     window.localStorage.setItem(key, JSON.stringify(nextEntries));
   }
 
+  private remove<T extends { id?: string; quizId?: string }>(key: string, entryId: string, idKey: "id" | "quizId") {
+    const entries = this.parse<T>(key);
+    const nextEntries = entries.filter((entry) => entry[idKey] !== entryId);
+    window.localStorage.setItem(key, JSON.stringify(nextEntries));
+  }
+
   async getQuizzes() {
     return this.parse<StoredQuiz>(FALLBACK_QUIZZES_KEY);
   }
@@ -100,12 +116,20 @@ class LocalStorageAdapter implements StorageAdapter {
     this.write(FALLBACK_QUIZZES_KEY, quiz, "id");
   }
 
+  async deleteQuiz(quizId: string) {
+    this.remove<StoredQuiz>(FALLBACK_QUIZZES_KEY, quizId, "id");
+  }
+
   async getStatistics() {
     return this.parse<QuizStatistics>(FALLBACK_STATS_KEY);
   }
 
   async saveStatistics(stats: QuizStatistics) {
     this.write(FALLBACK_STATS_KEY, stats, "quizId");
+  }
+
+  async deleteStatistics(quizId: string) {
+    this.remove<QuizStatistics>(FALLBACK_STATS_KEY, quizId, "quizId");
   }
 }
 
@@ -131,12 +155,20 @@ class ResilientStorageAdapter implements StorageAdapter {
     await this.run((adapter) => adapter.saveQuiz(quiz));
   }
 
+  async deleteQuiz(quizId: string) {
+    await this.run((adapter) => adapter.deleteQuiz(quizId));
+  }
+
   async getStatistics() {
     return this.run((adapter) => adapter.getStatistics());
   }
 
   async saveStatistics(stats: QuizStatistics) {
     await this.run((adapter) => adapter.saveStatistics(stats));
+  }
+
+  async deleteStatistics(quizId: string) {
+    await this.run((adapter) => adapter.deleteStatistics(quizId));
   }
 }
 

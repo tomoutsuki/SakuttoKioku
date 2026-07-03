@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "physics-thermodynamics-basics",
   "version": 1,
   "title": "Physics: Thermodynamics Basics",
@@ -15,7 +15,8 @@
         "A vacuum to a solid."
       ],
       "answer": 1,
-      "explanation": "Thermal energy naturally transfers from higher temperature to lower temperature."
+      "explanation": "Thermal energy naturally transfers from higher temperature to lower temperature.",
+      "hint": "Think about what happens when a hot cup touches a colder table."
     },
     {
       "id": "q2",
@@ -28,7 +29,8 @@
         "Third Law of Thermodynamics"
       ],
       "answer": 1,
-      "explanation": "The First Law expresses conservation of energy."
+      "explanation": "The First Law expresses conservation of energy.",
+      "hint": "It is the earliest numbered law after the Zeroth Law."
     },
     {
       "id": "q3",
@@ -41,7 +43,8 @@
         "Diffusion"
       ],
       "answer": 2,
-      "explanation": "Radiation can travel through a vacuum."
+      "explanation": "Radiation can travel through a vacuum.",
+      "hint": "It is the same mechanism by which sunlight reaches Earth."
     }
   ]
 }

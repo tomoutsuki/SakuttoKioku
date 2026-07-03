@@ -1,0 +1,80 @@
+{
+  "id": "physics-matching-drill-pack",
+  "version": 1,
+  "title": "Physics Matching Drill Pack",
+  "description": "ZIP-importable matching practice for physics concepts.",
+  "questions": [
+    {
+      "id": "mechanics-formulas",
+      "type": "drag_and_drop",
+      "question": "Match each mechanics quantity to its standard formula.",
+      "pairs": [
+        {
+          "left": "Force",
+          "right": "F = ma"
+        },
+        {
+          "left": "Momentum",
+          "right": "p = mv"
+        },
+        {
+          "left": "Kinetic energy",
+          "right": "E_k = 1/2 mv^2"
+        }
+      ],
+      "hint": "Look for the formula most commonly linked to each quantity.",
+      "explanation": "These are standard introductory mechanics relationships."
+    },
+    {
+      "id": "wave-applications",
+      "type": "drag_and_drop",
+      "question": "Match each electromagnetic wave to a common application.",
+      "pairs": [
+        {
+          "left": "Radio waves",
+          "right": "Broadcast communication"
+        },
+        {
+          "left": "Infrared",
+          "right": "Thermal cameras"
+        },
+        {
+          "left": "X-rays",
+          "right": "Medical imaging"
+        }
+      ],
+      "hint": "Think about long-distance signals, heat detection, and high-energy imaging.",
+      "explanation": "Each wave band is commonly associated with one of these technologies."
+    },
+    {
+      "id": "optics-effects",
+      "type": "drag_and_drop",
+      "question": "Match each optical element to its usual effect on parallel rays.",
+      "pairs": [
+        {
+          "left": "Convex lens",
+          "right": "Converges rays"
+        },
+        {
+          "left": "Concave lens",
+          "right": "Diverges rays"
+        },
+        {
+          "left": "Plane mirror",
+          "right": "Reflects without focusing"
+        }
+      ],
+      "hint": "One element brings rays together, one spreads them apart, and one only reflects them.",
+      "explanation": "Convex lenses converge, concave lenses diverge, and plane mirrors reflect without changing convergence."
+    },
+    {
+      "id": "si-current-unit",
+      "type": "multiple_choice",
+      "question": "Which SI unit measures electric current?",
+      "choices": ["Volt", "Ampere", "Newton", "Joule"],
+      "answer": 1,
+      "hint": "It is named after Andre-Marie Ampere.",
+      "explanation": "Electric current is measured in amperes."
+    }
+  ]
+}

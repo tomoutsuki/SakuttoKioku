@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "physics-optics-basics",
   "version": 1,
   "title": "Physics: Optics Basics",
@@ -16,7 +16,8 @@
         "It becomes a magnetic field."
       ],
       "answer": 1,
-      "explanation": "A prism disperses white light into its component wavelengths."
+      "explanation": "A prism disperses white light into its component wavelengths.",
+      "hint": "Think about the rainbow effect produced by a prism."
     },
     {
       "id": "q2",
@@ -29,7 +30,8 @@
         "Polarization"
       ],
       "answer": 2,
-      "explanation": "Refraction is the change in direction caused by light entering a medium with a different refractive index."
+      "explanation": "Refraction is the change in direction caused by light entering a medium with a different refractive index.",
+      "hint": "The term starts with the same first three letters as 'refractive index'."
     },
     {
       "id": "q3",
@@ -42,7 +44,8 @@
         "Red"
       ],
       "answer": 3,
-      "explanation": "Red light has the longest wavelength in the visible spectrum."
+      "explanation": "Red light has the longest wavelength in the visible spectrum.",
+      "hint": "Think of the color on the outer edge of a rainbow."
     }
   ]
 }

@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "physics-mechanics-basics",
   "version": 1,
   "title": "Physics: Mechanics Basics",
@@ -15,7 +15,8 @@
         "Momentum equals force divided by time."
       ],
       "answer": 0,
-      "explanation": "Newton's Second Law states that F = ma."
+      "explanation": "Newton's Second Law states that F = ma.",
+      "hint": "The answer is the equation that combines force, mass, and acceleration."
     },
     {
       "id": "q2",
@@ -29,7 +30,8 @@
         "Electrical energy"
       ],
       "answer": 2,
-      "explanation": "At the lowest point, gravitational potential energy is minimal and kinetic energy is maximal."
+      "explanation": "At the lowest point, gravitational potential energy is minimal and kinetic energy is maximal.",
+      "hint": "At the bottom of the swing, the pendulum is moving fastest."
     },
     {
       "id": "q3",
@@ -42,7 +44,8 @@
         "Velocity"
       ],
       "answer": 3,
-      "explanation": "Velocity has both magnitude and direction, so it is a vector."
+      "explanation": "Velocity has both magnitude and direction, so it is a vector.",
+      "hint": "Look for the option that includes direction, not only size."
     }
   ]
 }

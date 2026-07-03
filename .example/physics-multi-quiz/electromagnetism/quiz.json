@@ -1,4 +1,4 @@
-{
+﻿{
   "id": "physics-electromagnetism-basics",
   "version": 1,
   "title": "Physics: Electromagnetism Basics",
@@ -15,7 +15,8 @@
         "Coulomb"
       ],
       "answer": 2,
-      "explanation": "Electric current is measured in amperes."
+      "explanation": "Electric current is measured in amperes.",
+      "hint": "It is often shortened to 'amp'."
     },
     {
       "id": "q2",
@@ -28,7 +29,8 @@
         "Electron"
       ],
       "answer": 3,
-      "explanation": "Electrons have negative charge."
+      "explanation": "Electrons have negative charge.",
+      "hint": "It moves around the nucleus in simple atomic models."
     },
     {
       "id": "q3",
@@ -41,7 +43,8 @@
         "Only mass"
       ],
       "answer": 1,
-      "explanation": "Electric and magnetic fields are linked; changing electric fields can induce magnetic fields."
+      "explanation": "Electric and magnetic fields are linked; changing electric fields can induce magnetic fields.",
+      "hint": "Look for the field that pairs with electricity in Maxwell's equations."
     }
   ]
 }

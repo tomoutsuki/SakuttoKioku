@@ -1,7 +1,9 @@
-﻿import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { EmptyState } from "../components/EmptyState";
 import { ImportPanel } from "../components/ImportPanel";
 import { useAppContext } from "../context/AppContext";
+import { formatDuration, formatPercentage } from "../utils/format";
 
 interface ImportFeedbackState {
   successMessage?: string;
@@ -9,9 +11,38 @@ interface ImportFeedbackState {
 }
 
 export function HomePage() {
-  const { quizzes, importJson, importZip, isReady } = useAppContext();
+  const { quizzes, statistics, importJson, importZip, isReady } = useAppContext();
   const [feedback, setFeedback] = useState<ImportFeedbackState>({ errors: [] });
   const [isImporting, setIsImporting] = useState(false);
+
+  const weakQuizzes = useMemo(() => {
+    return quizzes
+      .map((quiz) => {
+        const stats = statistics[quiz.id];
+        const attempts = stats?.attempts ?? [];
+        if (attempts.length === 0) {
+          return undefined;
+        }
+
+        const latestAttempt = attempts[attempts.length - 1];
+        const averagePercentage = attempts.reduce((sum, attempt) => sum + attempt.percentage, 0) / attempts.length;
+
+        return {
+          quiz,
+          attempts,
+          latestAttempt,
+          averagePercentage,
+        };
+      })
+      .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+      .sort((left, right) => {
+        if (left.averagePercentage !== right.averagePercentage) {
+          return left.averagePercentage - right.averagePercentage;
+        }
+        return right.latestAttempt.wrongAnswers - left.latestAttempt.wrongAnswers;
+      })
+      .slice(0, 5);
+  }, [quizzes, statistics]);
 
   async function handleImport(action: (file: File) => Promise<{ importedQuizzes: { title: string }[]; errors: string[] }>, file: File) {
     setIsImporting(true);
@@ -38,6 +69,21 @@ export function HomePage() {
         onImportZip={(file) => handleImport(importZip, file)}
       />
 
+      <section className="surface-card animate-rise p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Review</p>
+            <h2 className="mt-2 text-2xl font-black">Review your mistakes</h2>
+            <p className="mt-2 text-sm leading-6 text-ink/70">
+              Open a standalone page with the incorrect answers from the latest attempts across your quizzes.
+            </p>
+          </div>
+          <Link to="/review-mistakes" className="action-button bg-ink text-white hover:bg-ink/90">
+            Review Mistakes
+          </Link>
+        </div>
+      </section>
+
       {feedback.successMessage || feedback.errors.length > 0 ? (
         <section className="surface-card animate-rise p-5">
           {feedback.successMessage ? (
@@ -55,6 +101,41 @@ export function HomePage() {
               </ul>
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {weakQuizzes.length > 0 ? (
+        <section className="surface-card animate-rise p-6">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">Weak points</p>
+          <h2 className="mt-2 text-2xl font-black">Lower-performing quizzes</h2>
+          <div className="mt-4 grid gap-3">
+            {weakQuizzes.map(({ quiz, attempts, latestAttempt, averagePercentage }) => (
+              <article key={quiz.id} className="rounded-3xl bg-ink/5 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-black text-ink">{quiz.title}</h3>
+                    <p className="mt-1 text-xs text-ink/65">{quiz.collectionName || "Standalone quiz"}</p>
+                  </div>
+                  <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-ink/70">
+                    {formatPercentage(averagePercentage)} avg
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold text-ink/70">
+                  <span className="rounded-full bg-white px-3 py-1">{attempts.length} attempts</span>
+                  <span className="rounded-full bg-white px-3 py-1">{latestAttempt.wrongAnswers} wrong last run</span>
+                  <span className="rounded-full bg-white px-3 py-1">{formatDuration(latestAttempt.durationMs)}</span>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Link to={`/quiz/${quiz.id}`} className="action-button flex-1 bg-brand text-white hover:bg-brand-deep">
+                    Retry quiz
+                  </Link>
+                  <Link to={`/review-mistakes?quizId=${encodeURIComponent(quiz.id)}`} className="action-button flex-1 bg-ink/5 text-ink hover:bg-ink/10">
+                    Review mistakes
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
       ) : null}
 
